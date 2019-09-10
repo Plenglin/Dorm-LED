@@ -1,11 +1,14 @@
 #pragma once
 
+#include <Arduino.h>
+
 namespace state {
   String read_token(Stream &stream, bool &reached_end) {
     String arg;
+    reached_end = false;
     while (stream.available()) {
       char c = stream.read();
-      reached_end = c == '\n';
+      reached_end = (c == '\n');
       if (reached_end || c == ' ') {
         return arg;
       }
@@ -33,11 +36,12 @@ namespace state {
         bool reached_end = false;
         int i = 0;
         while (i < arg_count && !reached_end) {
-          args[i++] = read_token(stream, reached_end);
+          args[i] = read_token(stream, reached_end);
+          i++;
         }
-        if (parse_args(stream, i - 1, args)) {
+        if (parse_args(stream, i, args)) {
           current_state->terminate();
-          init();
+          this->init();
           return this;
         }
         return current_state;
@@ -70,6 +74,7 @@ namespace state {
         if (!stream.available()) {
           return;
         }
+        delay(10);
         bool flag = false;
         auto command = read_token(stream, flag);
         for (int i = 0; i < count; i++) {

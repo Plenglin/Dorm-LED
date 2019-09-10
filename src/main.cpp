@@ -4,7 +4,7 @@
 #include <FastLED.h>
 #include <LiquidCrystal_PCF8574.h>
 
-#include "states.hpp"
+#include "fillstate.hpp"
 
 
 const int LED_COUNT = 84;
@@ -14,7 +14,7 @@ CRGB leds[LED_COUNT];
 
 const int STATE_COUNT = 1;
 state::State* states[STATE_COUNT] = {
-  new state::Fill()
+  new FillState<LED_COUNT>(leds)
 };
 state::StateManager state_manager(Serial, STATE_COUNT, states);
 
@@ -30,8 +30,14 @@ void parse_command() {
 
 void setup() {
   Serial.begin(38400);
+  Serial.println("Initializing");
+  FastLED.addLeds<WS2812B, 2, BRG>(leds, LED_COUNT);
+  fill_solid(leds, LED_COUNT, CRGB::Black);
+  FastLED.show();
+  state_manager.init();
 }
 
 void loop() {
+  state_manager.read_commands();
   state_manager.update();
 }
