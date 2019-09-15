@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Stream.h>
+#include <FastLED.h>
 
 #include "state.hpp"
 

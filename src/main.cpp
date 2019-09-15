@@ -4,7 +4,9 @@
 #include <FastLED.h>
 #include <LiquidCrystal_PCF8574.h>
 
-#include "fillstate.hpp"
+#include "constants.hpp"
+#include "fill.hpp"
+#include "reactive.hpp"
 
 
 const int LED_COUNT = 84;
@@ -12,26 +14,17 @@ const int SEG_A = 20;
 const int SEG_B = LED_COUNT - SEG_A;
 CRGB leds[LED_COUNT];
 
-const int STATE_COUNT = 1;
+const int STATE_COUNT = 2;
 state::State* states[STATE_COUNT] = {
-  new FillState<LED_COUNT>(leds)
+  new FillState<LED_COUNT>(leds),
+  new ReactiveState<LED_COUNT>(leds)
 };
 state::StateManager state_manager(Serial, STATE_COUNT, states);
-
-void parse_command() {
-  String line = Serial.readStringUntil('\n');
-  auto iter = line.begin();
-  //auto cmd_end = strutils::get_token_end(iter, line.end(), ' ');
-
-  while (iter != line.end()) {
-
-  }
-}
 
 void setup() {
   Serial.begin(38400);
   Serial.println("Initializing");
-  FastLED.addLeds<WS2812B, 2, BRG>(leds, LED_COUNT);
+  FastLED.addLeds<WS2812B, pin::LED_DATA, BRG>(leds, LED_COUNT);
   fill_solid(leds, LED_COUNT, CRGB::Black);
   FastLED.show();
   state_manager.init();
