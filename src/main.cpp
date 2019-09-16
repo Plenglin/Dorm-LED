@@ -19,11 +19,13 @@ state::State* states[STATE_COUNT] = {
   new FillState<LED_COUNT>(leds),
   new ReactiveState<LED_COUNT>(leds)
 };
-state::StateManager state_manager(Serial, STATE_COUNT, states);
+state::StateManager state_manager(STATE_COUNT, states);
 
 void setup() {
-  Serial.begin(38400);
+  Serial.begin(9600);
   Serial.println("Initializing");
+  Serial.setTimeout(1000);
+
   FastLED.addLeds<WS2812B, pin::LED_DATA, BRG>(leds, LED_COUNT);
   fill_solid(leds, LED_COUNT, CRGB::Black);
   FastLED.show();
@@ -31,6 +33,9 @@ void setup() {
 }
 
 void loop() {
-  state_manager.read_commands();
+  if (Serial.available()) {
+    auto s = Serial.readStringUntil('\n');
+    state_manager.read_commands(s.begin(), s.end());
+  }
   state_manager.update();
 }

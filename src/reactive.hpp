@@ -13,7 +13,7 @@ class ReactiveState : public state::State {
   public:
     ReactiveState(CRGB* leds) : state::State(0, "reactive"), leds(leds) {}
 
-    virtual bool parse_args(Stream& stream, int parsed_args, String* cmds) override {
+    virtual bool parse_args(int parsed_args, String* cmds) override {
       return true;
     }
 
