@@ -15,10 +15,7 @@ const int SEG_B = LED_COUNT - SEG_A;
 CRGB leds[LED_COUNT];
 
 const int STATE_COUNT = 2;
-state::State* states[STATE_COUNT] = {
-  new FillState<LED_COUNT>(leds),
-  new ReactiveState<LED_COUNT>(leds)
-};
+state::State* states[STATE_COUNT] = {new FillState(), new ReactiveState()};
 state::StateManager state_manager(STATE_COUNT, states);
 
 void setup() {

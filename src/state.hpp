@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include "segment.hpp"
+
 namespace state {
   String read_next_token(char* &iter, char* end) {
     String token;
@@ -20,9 +22,18 @@ namespace state {
     private:
       int arg_count;
       String cmd_name;
+      Segment* segment;
     public:
       State(int arg_count, String cmd_name) : arg_count(arg_count), cmd_name(cmd_name) {
 
+      }
+
+      Segment* get_segment() {
+        return segment;
+      }
+
+      void set_segment(Segment* segment) {
+        this->segment = segment;
       }
 
       String get_cmd_name() { 

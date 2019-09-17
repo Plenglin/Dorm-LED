@@ -4,13 +4,11 @@
 
 #include "state.hpp"
 
-template <int led_count>
 class FillState : public state::State {
   private:
-    CRGB* leds;
     CRGB color = CRGB::Black;
   public:
-    FillState(CRGB* leds) : state::State(3, "fill"), leds(leds) {}
+    FillState() : state::State(3, "fill") {}
 
     virtual bool parse_args(int parsed_args, String* cmds) override {
       if (parsed_args == 1) {
@@ -40,12 +38,14 @@ class FillState : public state::State {
     }
 
     virtual void init() override {
-      fill_solid(leds, led_count, color);
+      auto segment = get_segment();
+      fill_solid(segment->get_leds(), segment->get_led_count(), color);
       FastLED.show();
     }
 
     virtual void terminate() override {
-      fill_solid(leds, led_count, CRGB::Black);
+      auto segment = get_segment();
+      fill_solid(segment->get_leds(), segment->get_led_count(), CRGB::Black);
       FastLED.show();
     }
 };
