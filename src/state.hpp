@@ -77,7 +77,7 @@ namespace state {
         current_state->init();
       }
 
-      void read_commands(char* iter, char* end) {
+      State* read_commands(char* iter, char* end) {
         auto command = read_next_token(iter, end);
         for (int i = 0; i < count; i++) {
           if (states[i]->get_cmd_name() == command) {
@@ -85,6 +85,7 @@ namespace state {
             break;
           }
         }
+        return current_state;
       }
 
       void update() {

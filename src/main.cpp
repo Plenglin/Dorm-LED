@@ -6,16 +6,17 @@
 
 #include "constants.hpp"
 #include "fill.hpp"
+#include "hue.hpp"
 #include "reactive.hpp"
-
 
 const int LED_COUNT = 84;
 const int SEG_A = 20;
 const int SEG_B = LED_COUNT - SEG_A;
 CRGB leds[LED_COUNT];
+Segment full_strand(LED_COUNT, leds);
 
-const int STATE_COUNT = 2;
-state::State* states[STATE_COUNT] = {new FillState(), new ReactiveState()};
+const int STATE_COUNT = 3;
+state::State* states[STATE_COUNT] = {new FillState(), new ReactiveState(), new HueState()};
 state::StateManager state_manager(STATE_COUNT, states);
 
 void setup() {
@@ -32,7 +33,7 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     auto s = Serial.readStringUntil('\n');
-    state_manager.read_commands(s.begin(), s.end());
+    state_manager.read_commands(s.begin(), s.end())->set_segment(&full_strand);
   }
   state_manager.update();
 }
