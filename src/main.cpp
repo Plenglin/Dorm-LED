@@ -16,7 +16,10 @@ CRGB leds[LED_COUNT];
 Segment full_strand(LED_COUNT, leds);
 
 const int STATE_COUNT = 3;
-state::State* states[STATE_COUNT] = {new FillState(), new ReactiveState(), new HueState()};
+FillState _fill_state;
+ReactiveState _reactive_state;
+HueState _hue_state;
+state::State* states[STATE_COUNT] = {&_fill_state, &_reactive_state, &_hue_state};
 state::StateManager state_manager(STATE_COUNT, states);
 
 void setup() {
@@ -27,12 +30,13 @@ void setup() {
   FastLED.addLeds<WS2812B, pin::LED_DATA, BRG>(leds, LED_COUNT);
   fill_solid(leds, LED_COUNT, CRGB::Black);
   FastLED.show();
-  state_manager.init();
+  state_manager.init(&full_strand);
 }
 
 void loop() {
   if (Serial.available()) {
     auto s = Serial.readStringUntil('\n');
+    Serial.println(s);
     state_manager.read_commands(s.begin(), s.end())->set_segment(&full_strand);
   }
   state_manager.update();

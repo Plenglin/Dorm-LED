@@ -48,7 +48,9 @@ namespace state {
           i++;
         }
         if (parse_args(i, args)) {
-          current_state->terminate();
+          if (current_state != this) {
+            current_state->terminate();
+          }
           this->init();
           return this;
         }
@@ -68,12 +70,16 @@ namespace state {
       int count;
       State** states;
       state::State* current_state;
+      Segment* current_segment;
     public:
       StateManager(int count, State** states) : count(count), states(states) {
         current_state = states[0];
       }
 
-      void init() {
+      void init(Segment* segment) {
+        for (int i = 0; i < count; i++) {
+          states[i]->set_segment(segment);
+        }
         current_state->init();
       }
 
