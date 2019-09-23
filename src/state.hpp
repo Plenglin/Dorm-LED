@@ -57,7 +57,7 @@ namespace state {
         return current_state;
       }
 
-      virtual bool parse_args(int parsed_args, String* cmds) {
+      virtual bool parse_args(int arg_count, String* args) {
         return false;
       }
       virtual void init() {}
